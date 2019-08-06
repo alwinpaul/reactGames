@@ -27,7 +27,8 @@ class Board extends Component {
     return (
       <Square
         squareClicked={() => this.handleSquareClick(i)}
-        value={this.state.squareValue[i]}
+        index={i}
+        winningIndex = {this.state.winningIndex}
       >
         {this.state.squareValue[i]}
       </Square>
@@ -37,27 +38,30 @@ class Board extends Component {
   checkForWinner(isX) {
     let playerValue = isX ? "X" : "O";
     let isWinner = false;
-    debugger;
     for (let i = 0; i < this.winningCombos.length; i++) {
-        const firstIndex = this.winningCombos[i][0];
-        const secondIndex = this.winningCombos[i][1];
-        const thirdIndex = this.winningCombos[i][2];
+      const firstIndex = this.winningCombos[i][0];
+      const secondIndex = this.winningCombos[i][1];
+      const thirdIndex = this.winningCombos[i][2];
       if (
-        this.state.squareValue[firstIndex] == playerValue &&
-        this.state.squareValue[secondIndex] == playerValue &&
-        this.state.squareValue[thirdIndex] == playerValue
+        this.state.squareValue[firstIndex] === playerValue &&
+        this.state.squareValue[secondIndex] === playerValue &&
+        this.state.squareValue[thirdIndex] === playerValue
       ) {
-          const winnerIndexs = [firstIndex, secondIndex, thirdIndex];
-          this.setState({
-              winningIndex: winnerIndexs
-          });
-          isWinner = true;
-          break;
+        const winnerIndexs = [firstIndex, secondIndex, thirdIndex];
+        this.setState({
+          winningIndex: winnerIndexs
+        });
+        isWinner = true;
+        break;
       }
-    };
-    if(isWinner) {
-        alert(playerValue + " Wins" )
     }
+    if (isWinner) {
+      alert(playerValue + " Wins");
+      this.resetBoard();
+    }
+    this.setState({
+      isX: !this.state.isX
+    });
   }
 
   handleSquareClick(i) {
@@ -70,9 +74,18 @@ class Board extends Component {
     this.setState({
       squareValue: squares
     });
-    this.checkForWinner(this.state.isX);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.squareValue !== this.state.squareValue) {
+      this.checkForWinner(this.state.isX);
+    }
+  }
+
+  resetBoard() {
+    let newBoard = Array(9).fill(null);
     this.setState({
-      isX: !this.state.isX
+      squareValue: newBoard
     });
   }
 
