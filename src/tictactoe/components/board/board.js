@@ -28,7 +28,7 @@ class Board extends Component {
       <Square
         squareClicked={() => this.handleSquareClick(i)}
         index={i}
-        winningIndex = {this.state.winningIndex}
+        winningIndex={this.state.winningIndex}
       >
         {this.state.squareValue[i]}
       </Square>
@@ -65,6 +65,10 @@ class Board extends Component {
   }
 
   handleSquareClick(i) {
+    if (this.state.squareValue[i]) {
+      alert("Cannot click on the same square...Retry");
+      return;
+    }    
     const squares = this.state.squareValue.slice();
     if (this.state.isX) {
       squares[i] = "X";
@@ -80,12 +84,17 @@ class Board extends Component {
     if (prevState.squareValue !== this.state.squareValue) {
       this.checkForWinner(this.state.isX);
     }
+    if(!this.state.squareValue.includes(null)){
+        alert('Game Draw...Try Again');
+        this.resetBoard();
+    }
   }
 
   resetBoard() {
     let newBoard = Array(9).fill(null);
     this.setState({
-      squareValue: newBoard
+      squareValue: newBoard,
+      isX: true
     });
   }
 
